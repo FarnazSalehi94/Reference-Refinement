@@ -1,0 +1,210 @@
+#  Generated automatically by verkko.sh.
+#  Changes will be overwritten.
+
+VERKKO:              '/home/salehi/miniconda3/envs/verkko/lib/verkko'
+
+MBG:                 '/home/salehi/miniconda3/envs/verkko/lib/verkko/bin/MBG'
+GRAPHALIGNER:        '/home/salehi/miniconda3/envs/verkko/bin/GraphAligner'
+MASHMAP:             '/home/salehi/miniconda3/envs/verkko/bin/mashmap'
+SEQTK:               '/home/salehi/miniconda3/envs/verkko/bin/seqtk'
+WINNOWMAP:           '/home/salehi/miniconda3/envs/verkko/bin/winnowmap'
+MINIMAP:             '/home/salehi/miniconda3/envs/verkko/bin/minimap2'
+BWA:                 '/home/salehi/miniconda3/envs/verkko/bin/bwa'
+SAMTOOLS:            '/home/salehi/miniconda3/envs/verkko/bin/samtools'
+
+PYTHON:              ''
+PERL:                ''
+
+HIFI_READS:
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/SRR26381151.fastq'
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/SRR26381152.fastq'
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/SRR26381153.fastq'
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/SRR26381154.fastq'
+
+withONT:             'True'
+ONT_READS:
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/reads.fastq'
+
+withHIC:             'True'
+HIC_READS1:
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/ERR5309023_1.fastq'
+
+HIC_READS2:
+ - '/moosefs/salehi/ref-refine/assemblies/inputs/ERR5309023_2.fastq'
+
+withPOREC:           'False'
+
+
+with_ref:           'False'
+ref:                ''
+
+#  Algorithm parameters.
+
+#  buildStore, countKmers and computeOverlaps
+correction_enabled:  'True'
+mer_size:            '425'
+mer_window:          '19'
+mer_coverage:        '1000'
+
+cor_min_read:        '4000'
+cor_min_overlap:     '1000'
+
+cor_index_batches:   '16'
+cor_overlap_batches: '32'
+
+#  build-graph, MBG
+mbg_baseK:           '1001'
+mbg_maxK:            '15000'
+mbg_window:          '100'
+mbg_max_resolution:  '4000'
+mbg_hifi_coverage:   '25'
+mbg_unitig_abundance: '2'
+
+#  split_ont
+spl_bases:           '3000000000'
+spl_reads:           '150000'
+spl_min_length:      '4000'
+
+#  align_ont, GraphAligner
+ali_mxm_length:      '30'
+ali_mem_count:       '10000'
+ali_bandwidth:       '15'
+ali_multi_score_f:   '0.99'
+ali_clipping:        '0.85'
+ali_min_score:       '5000'
+ali_end_clipping:    '100'
+ali_incompat_cutoff: '0.15'
+ali_max_trace:       '5'
+ali_seed_window:     '5000'
+
+#  post-processing
+withBAM:             'True'
+short_contig_length: '100000'
+screen:              ''
+
+#  process_ont_paths
+pop_min_allowed_cov: '5'
+pop_resolve_steps:   '20 10 5'
+haploid:             'False'
+
+#  Rukki
+ruk_enable:          'False'
+ruk_hap1:            ''
+ruk_hap2:            ''
+ruk_type:            ''
+ruk_fract:           '0.9'
+
+# consensus
+cns_num_iter:        '2'
+cns_max_cov:         '50'
+cns_quick:           'True'
+#  HiC algo options
+no_rdna_tangle:      'False'
+uneven_depth:        'False'
+haplo_divergence:    '0.05'
+telomere_motif:      'CCCTAA'
+
+#  Aligning hic reads
+shc_bases:           '30000000000000'
+shc_reads:           '20000000'
+shc_min_length:      '0'
+
+#  Run parameters.
+
+keep_intermediate:   'True'
+
+#  buildStore, countKmers and computeOverlaps
+sto_n_cpus:          '1'
+sto_mem_gb:          '4'
+sto_time_h:          '4'
+
+mer_n_cpus:          '4'
+mer_mem_gb:          '32'
+mer_time_h:          '8'
+
+meg_n_cpus:          '4'
+meg_mem_gb:          '32'
+meg_time_h:          '4'
+
+ovb_n_cpus:          '8'
+ovb_mem_gb:          '1'
+ovb_time_h:          '24'
+
+ovs_n_cpus:          '1'
+ovs_mem_gb:          '128'
+ovs_time_h:          '12'
+
+red_n_cpus:          '4'
+red_mem_gb:          '32'
+red_time_h:          '4'
+
+#  build-graph
+mbg_n_cpus:          '4'
+mbg_mem_gb:          '0'
+mbg_time_h:          '72'
+
+#  process_graph
+utg_n_cpus:          '1'
+utg_mem_gb:          '64'
+utg_time_h:          '24'
+
+#  split_ont
+spl_n_cpus:          '1'
+spl_mem_gb:          '8'
+spl_time_h:          '96'
+
+#  align_ont
+ali_n_cpus:          '24'
+ali_mem_gb:          '64'
+ali_time_h:          '24'
+
+#  process_ont_paths
+pop_n_cpus:          '16'
+pop_mem_gb:          '64'
+pop_time_h:          '48'
+
+#  untip
+utp_n_cpus:          '1'
+utp_mem_gb:          '64'
+utp_time_h:          '24'
+
+#  rukki
+ruk_n_cpus:          '8'
+ruk_mem_gb:          '16'
+ruk_time_h:          '4'
+
+#  create_layout
+lay_n_cpus:          '1'
+lay_mem_gb:          '64'
+lay_time_h:          '24'
+
+#  get_ont_subset
+sub_n_cpus:          '8'
+sub_mem_gb:          '16'
+sub_time_h:          '24'
+
+#  partition_consensus
+par_n_cpus:          '1'
+par_mem_gb:          '32'
+par_time_h:          '48'
+
+#  cns
+cns_n_cpus:          '8'
+cns_mem_gb:          '0'
+cns_time_h:          '48'
+
+#  align hic stuff
+ahc_n_cpus:          '24'
+ahc_mem_gb:          '64'
+ahc_time_h:          '48'
+
+#  fast hic stuff
+fhc_n_cpus:          '8'
+fhc_mem_gb:          '16'
+fhc_time_h:          '36'
+
+#hi-c scaffolding itself
+shc_n_cpus:          '8'
+shc_mem_gb:          '128'
+shc_time_h:          '24'
+#  This is the end.

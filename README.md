@@ -1,329 +1,140 @@
-# Reference-Refinement
+# Brown Norway Reference Genome Refinement
 
+**Evidence-based refinement of the BN/NHsdMcwi rat genome using PacBio HiFi, Oxford Nanopore ultra-long reads, and Hi-C.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+This research compares experimental **hifiasm hybrid_v1** and **Verkko** assemblies against **GRCr8** (*Rattus norvegicus*, RefSeq [GCF_036323735.1](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_036323735.1/)). The objective is an accurate, structurally correct and complete reference—not simply a larger N50.
 
-A comprehensive pipeline for generating high-quality de novo genome assemblies using long-read sequencing technologies. This workflow integrates PacBio HiFi, Oxford Nanopore (ONT), and Hi-C data to produce chromosome-level assemblies with thorough quality assessment and error correction.
+<!-- BEGIN CURRENT_STATUS -->
+> Corrected Hi-C outputs are not yet eligible for import; mapping, pairs validation and regeneration have separate status gates.
+<!-- END CURRENT_STATUS -->
 
-## Table of Contents
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the dated scheduler snapshot and [scientific caveats](docs/INTERPRETATION.md) before interpreting differences.
 
-- [Overview](#overview)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Input Data](#input-data)
-- [Pipeline](#pipeline)
-  - [1. Basecalling](#1-basecalling)
-  - [2. Read Preparation](#2-read-preparation)
-  - [3. De Novo Assembly](#3-de-novo-assembly)
-  - [4. Assembly Statistics](#4-assembly-statistics)
-  - [5. Quality Assessment and Correction](#5-quality-assessment-and-correction)
-- [Output Files](#output-files)
-- [Results](#results)
-- [Troubleshooting](#troubleshooting)
-- [Citations](#citations)
-- [License](#license)
+## Research objectives
 
-## Overview
+1. Compare assembly continuity, k-mer accuracy and completeness.
+2. Validate chromosome structure using reference alignments, Hi-C and independent long-read support.
+3. Evaluate centromeres, telomeres, satellites, segmental duplications and unresolved repeats.
+4. Distinguish genuinely missing or collapsed sequence from alignment ambiguity and sample differences.
+5. Make only independently supported corrections; preserve all original assemblies.
+6. Identify biologically justified targets for additional ONT sequencing/adaptive sampling.
 
-This pipeline performs de novo genome assembly using a hybrid approach that leverages the strengths of multiple sequencing technologies:
+## Sequencing datasets
 
-| Technology | Purpose | Advantage |
-|------------|---------|-----------|
-| PacBio HiFi | Primary assembly | High accuracy (~99.9%) |
-| Oxford Nanopore | Gap filling, scaffolding | Ultra-long reads (>100kb) |
-| Hi-C | Chromosome scaffolding | Long-range contact information |
+| Technology | Dataset | Available information | Role |
+|---|---|---|---|
+| PacBio HiFi | SRR26381151–SRR26381154; BioSample SAMN37807429 | Approximately 114.1 Gb, about 40× using a 2.85-Gb denominator | Accurate long-read sequence |
+| ONT ultra-long | Local `reads.fastq` | Approximately 262.6 Gb; read N50 approximately 79.7 kb | Long-range repeat resolution |
+| Hi-C | ERR5309023; BioSample SAMN16261960 | 433,992,207 records per validated mate | Long-range assembly information and contact-map review |
 
-The workflow produces two parallel assemblies using **Hifiasm** and **Verkko**, enabling comparison and selection of the best result.
+**The datasets are not confirmed to come from the same individual.** They are associated with the highly inbred BN/NHsdMcwi strain; ONT individual identity relative to HiFi remains unverified. Approximate long-read quantities come from the project handoff, not a new file scan. Public accessions, local filenames and validation provenance are in [metadata](metadata/README.md). No sequencing data are stored here.
 
-## Requirements
+## Assembly workflow
 
-### Hardware
-
-- CPU: 32+ cores recommended
-- RAM: 128GB+ for mammalian genomes
-- Storage: ~2TB free space for intermediate files
-
-### Software
-
-| Tool | Version | Purpose |
-|------|---------|---------|
-| [Dorado](https://github.com/nanoporetech/dorado) | ≥0.5.0 | ONT basecalling |
-| [Hifiasm](https://github.com/chhylp123/hifiasm) | ≥0.19.0 | Genome assembly |
-| [Verkko](https://github.com/marbl/verkko) | ≥2.3 | Genome assembly |
-| [gfastats](https://github.com/vgl-hub/gfastats) | ≥1.3.0 | Assembly statistics |
-| [NucFlag](https://github.com/lbcb-sci/NucFlag) | ≥1.0.0 | Misassembly detection |
-| [Inspector](https://github.com/Maggi-Chen/Inspector) | ≥1.3.0 | Error correction |
-| [minimap2](https://github.com/lh3/minimap2) | ≥2.26 | Read alignment |
-| [samtools](https://github.com/samtools/samtools) | ≥1.17 | BAM processing |
-
-## Installation
-
-### Option 1: Conda environments (recommended)
-
-```bash
-# Hifiasm
-conda create -n hifiasm -c bioconda hifiasm -y
-
-# Verkko
-mamba create -n verkko -c conda-forge -c bioconda verkko=2.3 python=3.10 setuptools -y
-
-# NucFlag
-conda create -n nucflag -c bioconda nucflag -y
-
-# gfastats
-conda create -n gfastats -c bioconda gfastats -y
-
-# Inspector (from source due to dependency conflicts)
-conda create -n inspector -c conda-forge -c bioconda python=3.9 minimap2 samtools openssl -y
-conda activate inspector
-pip install pysam statsmodels numpy scipy
-git clone https://github.com/Maggi-Chen/Inspector.git ~/Inspector
-chmod +x ~/Inspector/inspector.py ~/Inspector/inspector-correct.py
+```mermaid
+flowchart TD
+    H[Four validated HiFi runs] --> A[hifiasm hybrid_v1]
+    O[Validated ONT ultra-long reads] --> A
+    C[Validated Hi-C pair] --> A
+    H --> V[Verkko 2.3.2]
+    O --> V
+    C --> V
+    A --> Q[Contiguity + Merqury + GRCr8 alignment]
+    V --> Q
+    A --> M[Hi-C remapping and pairs validation — ongoing]
+    V --> M
+    M --> K[Corrected Cooler raw/balanced maps + Pretext — pending]
+    Q --> E[Integrate read support, repeats and structural evidence]
+    K --> E
+    E --> R[Candidate refinement — only after validation]
 ```
 
-### Option 2: Docker
+### Hifiasm hybrid_v1
 
-```bash
-# Coming soon
-```
+Successful job **2871178** used the experimental hybrid_v1 executable reporting **0.25.1-r942**, `--ont`, all four HiFi files via `--hf`, and Hi-C via `--h1/--h2`, with **64 threads**. ONT reads were the positional input. Runtime: **27:02:06**. This is **not standard hifiasm**; substituting an ordinary release with the same version string is not reproducible. See [methods and executable identity](assembly/README.md).
 
-## Input Data
+### Verkko
 
-| Data Type | Format | Example |
-|-----------|--------|---------|
-| ONT raw | POD5 | `*.pod5` |
-| ONT basecalled | BAM/FASTQ | `reads.fastq` |
-| PacBio HiFi | FASTQ | `hifi_reads.fastq` |
-| Hi-C | Paired FASTQ | `hic_R1.fastq.gz`, `hic_R2.fastq.gz` |
+Successful job **2871179** used **Verkko 2.3.2**, all four HiFi runs, ONT reads and both Hi-C mates, in local mode with **64 CPUs and 700G requested memory**. Runtime: **55:46:42**. The main combined `assembly.fasta` is evaluated here, not a single haplotype. Exact submitted assembly commands are preserved under [assembly/](assembly/).
 
-## Pipeline
+## Assembly comparison
 
-### 1. Basecalling
+<!-- BEGIN VERIFIED_METRICS -->
+| Metric | Hifiasm primary | Verkko main | GRCr8 |
+|---|---:|---:|---:|
+| Length (bp) | 2,911,551,654 | 2,899,709,555 | 2,849,581,192 |
+| FASTA records | 125 | 272 | 76 |
+| True contig N50 (bp) | 144,104,652 | 126,563,169 | 64,250,101 |
+| Scaffold N50 (bp) | 144,104,652 | 146,314,543 | 137,014,596 |
+| N-run gaps | 0 | 21 | 220 |
+| Gap bases | 0 | 1,049,757 | 4,130,577 |
+| Merqury QV | 64.2134 | 58.9038 | 68.5593 |
+| Solid-read k-mer completeness (%) | 99.7315 | 99.7451 | 99.716 |
+<!-- END VERIFIED_METRICS -->
 
-Convert raw ONT signal data to sequences using Dorado with the SUP (super accuracy) model.
+**Definitions:** true contigs are split at every N-run; scaffold statistics use FASTA records. GRCr8 has 296 such contigs; Verkko has 293; hifiasm has 125. Merqury completeness is solid-read k-mer representation, not a direct percentage of genome bases. All three Merqury runs used the same combined HiFi **k=21** database and recorded threshold **9**.
 
-```bash
-dorado basecaller sup pod5_folder/ > basecalled.bam
-```
+Hifiasm has the strongest true contiguity of these assemblies. GRCr8 has the highest read-kmer QV, while Verkko has slightly higher k-mer completeness. These observations do **not** establish an overall best assembly.
 
-**Parameters:**
-- `sup`: Super accuracy model for highest quality basecalls
-- Add `--modified-bases 5mCG_5hmCG` for methylation calling
+## Quality assessment and chromosome comparisons
 
-### 2. Read Preparation
+Completed:
+- Consistent scaffold/true-contig/gap statistics.
+- Merqury QV, solid-kmer completeness, spectra plots and per-sequence estimates.
+- Minimap2 `asm5` comparisons of hifiasm primary/hap1/hap2 and Verkko against GRCr8; chromosome tables use primary target-span unions at MAPQ ≥20.
 
-Convert basecalled BAM to FASTQ format.
+Hifiasm hap1 and hap2 differ by about **244.02 Mb** in assembly length. Hap2 has approximately **202.02 Mb** more high-confidence X/Y reference coverage. This supports a sex-chromosome assignment imbalance, not proof of missing DNA. Chromosome 19 overlapping-contig alignments remain duplication/mapping-ambiguity candidates. [Interpretation](docs/INTERPRETATION.md) and [result index](results/README.md).
 
-```bash
-samtools fastq basecalled.bam > ont_reads.fastq
-```
+BUSCO, contamination screening and independent long-read structural validation remain planned; no results are claimed here.
 
-For multiple BAM files:
+## Hi-C contact-map analysis
 
-```bash
-samtools cat *.bam | samtools fastq > ont_reads.fastq
-```
+BWA-MEM (`-5SP -T0`), pairtools MAPQ ≥30 / `5unique`, coordinate sorting and duplicate removal produce standard **1-based** `.pairs`. Corrected Cooler loading must **not** use `--zero-based`.
 
-### 3. De Novo Assembly
+A documented correction separates validated original pairs from revisioned Cooler matrices and generates separately labeled **raw-count** and **ICE-balanced** maps. Overview labels and boundaries use actual Cooler bin offsets. Pretext uses original validated pairs independently of Cooler success. See [Hi-C analysis](analyses/hic-contact-maps/README.md).
 
-#### 3.1 Hifiasm
+The original submitted mapping jobs retain the legacy Cooler command; those legacy matrices are not approved for interpretation. Corrected matrix generation is gated on full pairs validation. Hi-C also contributed to assembly, so its validation is not fully independent.
 
-Hifiasm produces haplotype-resolved assemblies using HiFi reads with ONT and Hi-C integration.
+## Repeats, missing sequence and refinement
 
-```bash
-hifiasm -o hifiasm_output \
-        -t 32 \
-        --ul ont_reads.fastq \
-        --h1 hic_R1.fastq.gz \
-        --h2 hic_R2.fastq.gz \
-        hifi_reads.fastq
-```
+[Repeat analysis](analyses/repeats/README.md) will examine satellites, centromeric/telomeric sequence, tandem repeats and copy-number representation. [Missing-sequence analysis](analyses/missing-sequences/README.md) will combine reference-relative signals with read/kmer support and gap/repeat context. Both are planned, not completed.
 
-Convert GFA to FASTA:
+[Refinement](analyses/refinement/README.md) will require independent support, explicit versioning and before/after validation. No assembly editing or scaffolding has been performed in this repository reorganization.
 
-```bash
-awk '/^S/{print ">"$2; print $3}' hifiasm_output.hic.p_ctg.gfa > hifiasm_assembly.fasta
-```
+## Key figures
 
-**Output files:**
-| File | Description |
-|------|-------------|
-| `*.hic.p_ctg.gfa` | Primary contigs |
-| `*.hic.hap1.p_ctg.gfa` | Haplotype 1 |
-| `*.hic.hap2.p_ctg.gfa` | Haplotype 2 |
+![HiFi k-mer spectrum for hifiasm primary](figures/merqury/hifiasm.spectra-cn.png)
 
-#### 3.2 Verkko
+*Completed Merqury spectrum; read multiplicity versus distinct k-mer count, stratified by assembly copy number. This is not a Hi-C map or proof of repeat correctness.*
 
-Verkko creates high-quality assemblies optimized for telomere-to-telomere completeness.
+See the [figure index](figures/README.md) for Verkko/GRCr8 spectra and reference-span coverage plots. Corrected Hi-C figures will be added only after validation and review.
 
-```bash
-verkko -d verkko_output \
-       --hifi hifi_reads.fastq \
-       --nano ont_reads.fastq \
-       --hic1 hic_R1.fastq.gz \
-       --hic2 hic_R2.fastq.gz \
-       --threads 32
-```
+## Reproducibility and repository updates
 
-Copy assembly:
-
-```bash
-cp verkko_output/assembly.fasta verkko_assembly.fasta
-```
+This is a curated scientific repository, separate from the large HPC working tree. Imported scripts are **source-faithful HPC snapshots**, with original absolute paths and resource requests retained. They are not a turnkey portable workflow; do not submit them from this checkout without reviewing paths, versions, inputs and output destinations. A historical reference-comparison script still mentions raid5; do not reuse that dependency in new work.
 
-### 4. Assembly Statistics
+1. Read [reproducibility instructions](docs/REPRODUCIBILITY.md), [software inventory](metadata/software_versions.tsv), and [provenance](metadata/import_manifest.tsv).
+2. Use existing validated data/results where available; obtain approval before expensive SLURM work.
+3. Preview updates: `python3 scripts/sync_project.py plan --source /path/to/assemblies`.
+4. Apply approved local curation: `python3 scripts/sync_project.py apply --source /path/to/assemblies`.
+5. Inspect diffs and run the safety checks before staging/committing. Follow [the synchronization guide](docs/SYNCHRONIZATION.md).
 
-Generate assembly metrics using gfastats.
+No automatic job-output push is configured. The initial reorganization is intended for review through a pull request; merging is not authorized. After every meaningful completed research task, curate verified updates and propose a commit and push for explicit approval. Persistent maintenance instructions are saved in [AGENTS.md](AGENTS.md).
 
-```bash
-# Hifiasm
-gfastats hifiasm_assembly.fasta -t > hifiasm_stats.txt
-
-# Verkko
-gfastats verkko_assembly.fasta -t > verkko_stats.txt
-```
-
-### 5. Quality Assessment and Correction
-
-#### 5.1 NucFlag: Misassembly Detection
-
-NucFlag identifies structural errors by analyzing read alignments.
-
-**HiFi-based detection:**
-
-```bash
-minimap2 -ax map-hifi assembly.fasta hifi_reads.fastq -t 32 | \
-    samtools sort -o hifi_aligned.bam -@ 32
-samtools index hifi_aligned.bam
-nucflag -i hifi_aligned.bam -o nucflag_hifi -t 32
-```
-
-**ONT-based detection:**
-
-```bash
-minimap2 -ax map-ont assembly.fasta ont_reads.fastq -t 32 | \
-    samtools sort -o ont_aligned.bam -@ 32
-samtools index ont_aligned.bam
-nucflag -i ont_aligned.bam -o nucflag_ont -t 32
-```
-
-#### 5.2 Inspector: Error Detection and Correction
-
-Inspector identifies and corrects base-level and structural errors.
-
-**HiFi-based correction:**
-
-```bash
-# Detection
-python ~/Inspector/inspector.py \
-    -c assembly.fasta \
-    -r hifi_reads.fastq \
-    -o inspector_hifi \
-    --datatype hifi \
-    -t 32
-
-# Correction
-python ~/Inspector/inspector-correct.py \
-    -i inspector_hifi \
-    --datatype pacbio-hifi \
-    -o assembly_corrected_hifi.fasta \
-    -t 32
-```
+## Repository map
 
-**ONT-based correction:**
+| Directory | Contents |
+|---|---|
+| `docs/` | Methods, interpretation, reproducibility, history and update policy |
+| `assembly/` | Hifiasm hybrid_v1 and Verkko assembly scripts |
+| `analyses/` | Objective-organized analysis scripts and methodology |
+| `scripts/` | Curated import, safety and synchronization tooling |
+| `configs/` | Explicit import allowlist |
+| `metadata/` | Dataset, software, run and source-file provenance |
+| `results/` | Small verified scientific tables |
+| `figures/` | Selected completed figures and index |
+| `.github/` | Validation workflow, review template and local pre-commit hook |
 
-```bash
-# Detection
-python ~/Inspector/inspector.py \
-    -c assembly.fasta \
-    -r ont_reads.fastq \
-    -o inspector_ont \
-    --datatype nanopore \
-    -t 32
+## History, citation and reuse
 
-# Correction
-python ~/Inspector/inspector-correct.py \
-    -i inspector_ont \
-    --datatype nano-raw \
-    -o assembly_corrected_ont.fasta \
-    -t 32
-```
-
-## Output Files
-
-```
-project/
-├── hifiasm_assembly.fasta          # Hifiasm primary assembly
-├── hifiasm_hap1.fasta              # Hifiasm haplotype 1
-├── hifiasm_hap2.fasta              # Hifiasm haplotype 2
-├── verkko_assembly.fasta           # Verkko assembly
-├── hifiasm_stats.txt               # Hifiasm statistics
-├── verkko_stats.txt                # Verkko statistics
-├── nucflag_hifi/                   # NucFlag HiFi results
-├── nucflag_ont/                    # NucFlag ONT results
-├── inspector_hifi/                 # Inspector HiFi results
-│   └── summary_statistics          # QV and error rates
-├── inspector_ont/                  # Inspector ONT results
-├── hifiasm_corrected_hifi.fasta    # Corrected assembly (HiFi)
-└── hifiasm_corrected_ont.fasta     # Corrected assembly (ONT)
-```
-
-## Results
-
-### Assembly Metrics
-
-| Metric | Hifiasm | Verkko |
-|--------|---------|--------|
-| Total length | 2.82 Gb | TBD |
-| Number of contigs | 88 | TBD |
-| N50 | 129.7 Mb | TBD |
-| Longest contig | 435.2 Mb | TBD |
-| QV (quality value) | 54.57 | TBD |
-
-### Quality Interpretation
-
-| QV Score | Accuracy | Error Rate |
-|----------|----------|------------|
-| 40 | 99.99% | 1 in 10,000 |
-| 50 | 99.999% | 1 in 100,000 |
-| 60 | 99.9999% | 1 in 1,000,000 |
-
-## Troubleshooting
-
-### Common Issues
-
-**Verkko: `pkg_resources` error**
-```bash
-conda activate verkko
-pip install setuptools
-```
-
-**Inspector: Missing modules**
-```bash
-pip install statsmodels pysam numpy scipy
-```
-
-**Samtools: `libcrypto` error**
-```bash
-conda install -c conda-forge openssl
-```
-
-## Citations
-
-If you use this pipeline, please cite the following tools:
-
-- **Hifiasm**: Cheng, H., et al. (2021). Haplotype-resolved de novo assembly using phased assembly graphs with hifiasm. *Nature Methods*, 18(2), 170-175.
-
-- **Verkko**: Rautiainen, M., et al. (2023). Telomere-to-telomere assembly of diploid chromosomes with Verkko. *Nature Biotechnology*, 41(10), 1474-1482.
-
-- **Inspector**: Chen, Y., et al. (2021). Efficient assembly of nanopore reads via highly accurate and intact error correction. *Nature Communications*, 12(1), 60.
-
-- **Dorado**: Oxford Nanopore Technologies. https://github.com/nanoporetech/dorado
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For questions or issues, please open a GitHub issue or contact [your.email@example.com].
+The existing GitHub history is preserved. The previous README is [archived as historical documentation](docs/history/README.before-20261110.md), with its unsupported MIT badge/license claim removed; the exact original remains in Git history. Its older metrics and generic commands are not verified current results. No license file was present in the recovered repository; the license remains undecided pending the owner's explicit decision. Tool references are listed in [docs/REFERENCES.md](docs/REFERENCES.md).

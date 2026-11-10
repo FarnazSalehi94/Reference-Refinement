@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+root=$(git rev-parse --show-toplevel)
+python3 "$root/scripts/repository_guard.py" --staged --links
+git diff --cached --check

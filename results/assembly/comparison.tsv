@@ -1,0 +1,4 @@
+assembly	fasta_records_scaffolds	total_sequence_bp	scaffold_N50_bp	contigs_split_at_N_runs	contig_N50_bp	N_run_gap_count	total_N_gap_bases	QV	completeness_percent
+hifiasm	125	2911551654	144104652	125	144104652	0	0	64.2134	99.7315
+verkko	272	2899709555	146314543	293	126563169	21	1049757	58.9038	99.7451
+grcr8	76	2849581192	137014596	296	64250101	220	4130577	68.5593	99.716

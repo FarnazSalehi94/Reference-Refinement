@@ -1,0 +1,5 @@
+technology	accessions	biosample	local_files	provenance_limitations	validation_evidence
+PacBio HiFi	SRR26381151;SRR26381152;SRR26381153;SRR26381154	SAMN37807429	SRR26381151.fastq;SRR26381152.fastq;SRR26381153.fastq;SRR26381154.fastq	Same individual as other technologies not confirmed	Prior structural validation and moved-file SHA256 checks; see source_records
+ONT ultra-long	Not independently established	Not independently established	reads.fastq	BN/NHsdMcwi association; identity relative to HiFi unconfirmed	Prior structural validation and moved-file SHA256 checks; see source_records
+Hi-C	ERR5309023	SAMN16261960	ERR5309023_1.fastq;ERR5309023_2.fastq	Different public BioSample from HiFi; no shared-individual claim	SRA validation reported PASS; complete paired FASTQ scan; 433992207 records per mate
+Reference	GCF_036323735.1	Not applicable	GCF_036323735.1_GRCr8_genomic.fna.gz	Old indexed reference matched identifiers/lengths; sequence identity not established	Job 2871274 official MD5 and gzip checks passed

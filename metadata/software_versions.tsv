@@ -1,0 +1,12 @@
+software	version	role	evidence	limitation
+hifiasm hybrid_v1	0.25.1-r942	Experimental hybrid assembly	Run 2871178 log and executable SHA256 recorded in assembly/README.md	Exact fork source commit/build recipe not recovered
+Verkko	2.3.2	HiFi/ONT/Hi-C assembly	Successful run 2871179 and verkko conda package metadata	Not a complete environment lockfile
+minimap2	2.30-r1287	GRCr8 alignments	Direct version check of verkko environment executable referenced by scripts	assembly_eval contains a different version and was not used for these alignments
+Merqury	1.4.1	Read-kmer quality assessment	assembly_eval conda package metadata and completed results	Version from package metadata
+meryl	1.4.2	Combined HiFi k=21 database	assembly_eval conda package metadata and build_reads.slurm path	Not verkko environment meryl 1.4.1
+BWA	0.7.19-r1273	Hi-C mapping	Hifiasm mapping log executable version	Mapping ongoing
+pairtools	1.1.3	Hi-C parse/sort/dedup	Direct version check of hic_contact executable	Full project pairs validation pending
+Cooler	0.10.4	Hi-C matrices/balancing	Direct version check of moddotplot executable	Corrected project matrices pending
+samtools	1.23.1	FASTA indexes	verkko conda package metadata and script path	Version from package metadata
+PretextMap	0.2.4	Interactive Hi-C maps	pretext conda package metadata	Workflow pending
+PretextSnapshot	0.1.1	Hi-C map overview	pretext conda package metadata	Workflow pending
