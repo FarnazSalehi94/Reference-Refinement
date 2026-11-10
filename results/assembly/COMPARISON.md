@@ -1,4 +1,6 @@
-# Verified assembly comparison
+# Assembly comparison and historical quality estimates
+
+Contiguity/gap metrics retain their current status. **QV and k-mer completeness below are historical/preliminary**, not endorsed current quality estimates. Replacement evaluation is planned; no new values/job IDs are available. The combined TSV retains all prior numerical values unchanged for provenance.
 
 | Metric | Hifiasm primary | Verkko main | GRCr8 |
 |---|---:|---:|---:|
@@ -8,5 +10,5 @@
 | Scaffold N50 (bp) | 144,104,652 | 146,314,543 | 137,014,596 |
 | N-run gaps | 0 | 21 | 220 |
 | Gap bases | 0 | 1,049,757 | 4,130,577 |
-| Merqury QV | 64.2134 | 58.9038 | 68.5593 |
-| Solid-read k-mer completeness (%) | 99.7315 | 99.7451 | 99.716 |
+| Previous Merqury QV — historical/preliminary | 64.2134 | 58.9038 | 68.5593 |
+| Previous solid-read k-mer completeness (%) — historical/preliminary | 99.7315 | 99.7451 | 99.716 |

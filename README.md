@@ -39,8 +39,11 @@ flowchart TD
     H --> V[Verkko 2.3.2]
     O --> V
     C --> V
-    A --> Q[Contiguity + Merqury + GRCr8 alignment]
+    A --> Q[Contiguity + GRCr8 alignment]
     V --> Q
+    A --> P[Repeat Merqury / QV / k-mer evaluation — planned]
+    V --> P
+    P -. after validation and review .-> E
     A --> M[Hi-C remapping and pairs validation — ongoing]
     V --> M
     M --> K[Corrected Cooler raw/balanced maps + Pretext — pending]
@@ -68,24 +71,25 @@ Successful job **2871179** used **Verkko 2.3.2**, all four HiFi runs, ONT reads 
 | Scaffold N50 (bp) | 144,104,652 | 146,314,543 | 137,014,596 |
 | N-run gaps | 0 | 21 | 220 |
 | Gap bases | 0 | 1,049,757 | 4,130,577 |
-| Merqury QV | 64.2134 | 58.9038 | 68.5593 |
-| Solid-read k-mer completeness (%) | 99.7315 | 99.7451 | 99.716 |
 <!-- END VERIFIED_METRICS -->
 
-**Definitions:** true contigs are split at every N-run; scaffold statistics use FASTA records. GRCr8 has 296 such contigs; Verkko has 293; hifiasm has 125. Merqury completeness is solid-read k-mer representation, not a direct percentage of genome bases. All three Merqury runs used the same combined HiFi **k=21** database and recorded threshold **9**.
+**Definitions:** true contigs are split at every N-run; scaffold statistics use FASTA records. GRCr8 has 296 such contigs; Verkko has 293; hifiasm has 125.
 
-Hifiasm has the strongest true contiguity of these assemblies. GRCr8 has the highest read-kmer QV, while Verkko has slightly higher k-mer completeness. These observations do **not** establish an overall best assembly.
+Hifiasm has the strongest true contiguity of these assemblies. This does **not** establish an overall best assembly.
+
+### Previous quality estimates — historical/preliminary
+
+Previous Merqury QV, read-kmer completeness and spectra are retained [with explicit historical labels](analyses/merqury/README.md). They are **not current endorsed quality estimates** and are excluded from the headline comparison above. We plan to repeat these evaluations; no replacement results or replacement job IDs are available. This does not establish that the earlier calculations were incorrect.
 
 ## Quality assessment and chromosome comparisons
 
-Completed:
+Completed assembly-continuity and reference-alignment evaluations:
 - Consistent scaffold/true-contig/gap statistics.
-- Merqury QV, solid-kmer completeness, spectra plots and per-sequence estimates.
 - Minimap2 `asm5` comparisons of hifiasm primary/hap1/hap2 and Verkko against GRCr8; chromosome tables use primary target-span unions at MAPQ ≥20.
 
 Hifiasm hap1 and hap2 differ by about **244.02 Mb** in assembly length. Hap2 has approximately **202.02 Mb** more high-confidence X/Y reference coverage. This supports a sex-chromosome assignment imbalance, not proof of missing DNA. Chromosome 19 overlapping-contig alignments remain duplication/mapping-ambiguity candidates. [Interpretation](docs/INTERPRETATION.md) and [result index](results/README.md).
 
-BUSCO, contamination screening and independent long-read structural validation remain planned; no results are claimed here.
+**Quality-evaluation status:** the previous Merqury/k-mer jobs finished computationally, but their estimates are now historical/preliminary. Replacement Merqury, QV and k-mer evaluation is **planned, not confirmed running**; methods, inputs, resources and job IDs will be recorded when approved/submitted. BUSCO, contamination screening and independent long-read structural validation also remain planned; no new results are claimed here.
 
 ## Hi-C contact-map analysis
 
@@ -103,11 +107,11 @@ The original submitted mapping jobs retain the legacy Cooler command; those lega
 
 ## Key figures
 
-![HiFi k-mer spectrum for hifiasm primary](figures/merqury/hifiasm.spectra-cn.png)
+![GRCr8 reference-span coverage across four assembly outputs](figures/grcr8-comparison/four_assembly_coverage.svg)
 
-*Completed Merqury spectrum; read multiplicity versus distinct k-mer count, stratified by assembly copy number. This is not a Hi-C map or proof of repeat correctness.*
+*Primary alignment target-span coverage at MAPQ ≥20; this measures alignment spans, not base-level accuracy or proven sequence absence.*
 
-See the [figure index](figures/README.md) for Verkko/GRCr8 spectra and reference-span coverage plots. Corrected Hi-C figures will be added only after validation and review.
+See the [figure index](figures/README.md) for reference-span coverage plots and separately labeled **historical/preliminary Merqury spectra**. All previous figures remain preserved. Corrected Hi-C figures will be added only after validation and review.
 
 ## Reproducibility and repository updates
 
@@ -119,7 +123,7 @@ This is a curated scientific repository, separate from the large HPC working tre
 4. Apply approved local curation: `python3 scripts/sync_project.py apply --source /path/to/assemblies`.
 5. Inspect diffs and run the safety checks before staging/committing. Follow [the synchronization guide](docs/SYNCHRONIZATION.md).
 
-No automatic job-output push is configured. The initial reorganization is intended for review through a pull request; merging is not authorized. After every meaningful completed research task, curate verified updates and propose a commit and push for explicit approval. Persistent maintenance instructions are saved in [AGENTS.md](AGENTS.md).
+No automatic job-output push is configured. The initial reorganization was merged through PR #1. Subsequent corrections use new review branches and pull requests; agents must not merge them without explicit authorization. After every meaningful completed research task, curate verified updates and propose a commit and push for explicit approval. Persistent maintenance instructions are saved in [AGENTS.md](AGENTS.md).
 
 ## Repository map
 

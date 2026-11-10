@@ -1,5 +1,7 @@
 # Provenance and metadata
 
+**Evaluation status is separate from computational completion and checksum verification.** Previous Merqury/QV/read-kmer outputs are historical/preliminary; a repeat evaluation is planned, with no replacement results or job IDs. The controlling policy is [configs/evaluation_policy.json](../configs/evaluation_policy.json). Original result tables, figures, methods and import hashes are preserved. A historical job remaining COMPLETED must not silently promote its results to current status.
+
 - [datasets.tsv](datasets.tsv): public accessions and same-individual limitations. No private animal identifiers are included.
 - [software_versions.tsv](software_versions.tsv): observed tool versions and evidence; installation metadata is not a complete environment lockfile.
 - [import_manifest.tsv](import_manifest.tsv): exact HPC-relative source, repository destination, content SHA256, size, result evidence job and category.

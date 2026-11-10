@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "previous_kmer_evaluation": {
+    "classification": "historical/preliminary",
+    "jobs": ["2871273", "2871275"],
+    "reason": "The owner plans to repeat Merqury, QV and read-kmer evaluations. Previous outputs are retained for provenance, not endorsed as current quality estimates.",
+    "replacement_status": "planned",
+    "replacement_job_ids": [],
+    "replacement_results": "not available",
+    "scientific_caution": "This reclassification does not establish that the previous calculations were incorrect. No replacement analysis was launched by this documentation update."
+  },
+  "promotion_policy": "Only explicit scientific review of a new evaluation may promote replacement results. A successful historical job or unchanged file must never automatically restore current-result status."
+}

@@ -1,5 +1,6 @@
 # Configurations
 
+- `evaluation_policy.json`: owner-directed historical/preliminary status for previous Merqury/QV/k-mer outputs; planned replacement with no new results. Synchronization preserves this scientific classification independently of job completion.
 - `import_allowlist.json`: approved source directories/files, destination paths, successful job gates and selected figures for curation. New scientific objectives/results need deliberate review before additions.
 - `verkko/run_2871179.yml`: exact generated Verkko configuration from the successful run. Original tool/read paths and parameters are retained as provenance; do not assume it is portable or resubmit it unchanged.
 
