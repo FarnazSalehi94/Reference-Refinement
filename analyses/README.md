@@ -5,7 +5,7 @@
 | Continuity and gaps | Completed; `assembly-statistics/` |
 | GRCr8 structural comparison | Completed screening; `grcr8-comparison/` |
 | Chromosome assignment | Initial screening; `chromosome-investigation/` |
-| Read-kmer accuracy/completeness | Previous Merqury/QV/k-mer outputs historical/preliminary; replacement planned, not confirmed running; `merqury/` |
+| Read-kmer accuracy/completeness | Latest BN Merqury/QV/k-mer evaluation completed 2026-11-09; interpretation preliminary; further validation planned; `merqury/` |
 | Hi-C structural screening | Mapping/validation ongoing; `hic-contact-maps/` |
 | Repeats and chromosome ends | Planned; `repeats/` |
 | Missing/collapsed sequence | Planned; `missing-sequences/` |

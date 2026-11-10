@@ -41,9 +41,10 @@ flowchart TD
     C --> V
     A --> Q[Contiguity + GRCr8 alignment]
     V --> Q
-    A --> P[Repeat Merqury / QV / k-mer evaluation — planned]
+    A --> P[Merqury / QV / k-mer evaluation — completed Nov 9]
     V --> P
-    P -. after validation and review .-> E
+    P --> E
+    P -. further validation planned .-> F[Additional quality validation — planned]
     A --> M[Hi-C remapping and pairs validation — ongoing]
     V --> M
     M --> K[Corrected Cooler raw/balanced maps + Pretext — pending]
@@ -71,15 +72,19 @@ Successful job **2871179** used **Verkko 2.3.2**, all four HiFi runs, ONT reads 
 | Scaffold N50 (bp) | 144,104,652 | 146,314,543 | 137,014,596 |
 | N-run gaps | 0 | 21 | 220 |
 | Gap bases | 0 | 1,049,757 | 4,130,577 |
+| Merqury QV (preliminary interpretation) | 64.2134 | 58.9038 | 68.5593 |
+| Solid-read k-mer completeness (%) (preliminary interpretation) | 99.7315 | 99.7451 | 99.716 |
 <!-- END VERIFIED_METRICS -->
 
 **Definitions:** true contigs are split at every N-run; scaffold statistics use FASTA records. GRCr8 has 296 such contigs; Verkko has 293; hifiasm has 125.
 
 Hifiasm has the strongest true contiguity of these assemblies. This does **not** establish an overall best assembly.
 
-### Previous quality estimates — historical/preliminary
+### Latest completed Brown Norway quality evaluation — interpretation preliminary
 
-Previous Merqury QV, read-kmer completeness and spectra are retained [with explicit historical labels](analyses/merqury/README.md). They are **not current endorsed quality estimates** and are excluded from the headline comparison above. We plan to repeat these evaluations; no replacement results or replacement job IDs are available. This does not establish that the earlier calculations were incorrect.
+Jobs **2871273** (HiFi k=21 database), **2871274** (GRCr8 verification) and **2871275** (Merqury) completed successfully on **9 November 2026**, with the intended assemblies and expected QV/completeness/spectra outputs verified. These are our **latest completed BN evaluations**, not unfinished work or merely older historical results. Their scientific interpretation remains **preliminary, with further validation planned**. Numerical results and figures are preserved; no later evaluation job IDs or results have been verified. See [evaluation details](analyses/merqury/README.md).
+
+Older historical analyses are a separate provenance category. In particular, the legacy DLD1 Merqury workflow is not Brown Norway evidence; other older outputs require sample/assembly verification before comparison.
 
 ## Quality assessment and chromosome comparisons
 
@@ -89,7 +94,7 @@ Completed assembly-continuity and reference-alignment evaluations:
 
 Hifiasm hap1 and hap2 differ by about **244.02 Mb** in assembly length. Hap2 has approximately **202.02 Mb** more high-confidence X/Y reference coverage. This supports a sex-chromosome assignment imbalance, not proof of missing DNA. Chromosome 19 overlapping-contig alignments remain duplication/mapping-ambiguity candidates. [Interpretation](docs/INTERPRETATION.md) and [result index](results/README.md).
 
-**Quality-evaluation status:** the previous Merqury/k-mer jobs finished computationally, but their estimates are now historical/preliminary. Replacement Merqury, QV and k-mer evaluation is **planned, not confirmed running**; methods, inputs, resources and job IDs will be recorded when approved/submitted. BUSCO, contamination screening and independent long-read structural validation also remain planned; no new results are claimed here.
+**Quality-evaluation status:** the latest November 9 BN Merqury/k-mer evaluation is **completed**, while scientific interpretation is **preliminary**. Further validation is **planned, not confirmed running**; any new methods, inputs, resources and job IDs will be recorded when approved/submitted. BUSCO, contamination screening and independent long-read structural validation also remain planned; no new results are claimed here.
 
 ## Hi-C contact-map analysis
 
@@ -111,7 +116,7 @@ The original submitted mapping jobs retain the legacy Cooler command; those lega
 
 *Primary alignment target-span coverage at MAPQ ≥20; this measures alignment spans, not base-level accuracy or proven sequence absence.*
 
-See the [figure index](figures/README.md) for reference-span coverage plots and separately labeled **historical/preliminary Merqury spectra**. All previous figures remain preserved. Corrected Hi-C figures will be added only after validation and review.
+See the [figure index](figures/README.md) for reference-span coverage plots and **latest completed BN Merqury spectra, with preliminary interpretation**. All previous figures remain preserved. Corrected Hi-C figures will be added only after validation and review.
 
 ## Reproducibility and repository updates
 

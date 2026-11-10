@@ -2,12 +2,12 @@
 
 ## Evaluation status
 
-Previous Merqury/QV/read-kmer counts, completeness, error estimates and spectra are **historical/preliminary** because repeat evaluation is planned. Retain all outputs, but do not use them as current endorsed quality estimates or final assembly rankings. No replacement analysis is confirmed running and no new results/job IDs are available. This classification does not establish that previous calculations were incorrect. See [evaluation policy](../configs/evaluation_policy.json).
+Jobs 2871273/2871274/2871275 are the **latest completed Brown Norway k-mer/reference/Merqury evaluation**, completed 2026-11-09. Their QV/read-kmer counts, completeness, error estimates and spectra remain available with **preliminary scientific interpretation and further validation planned**. Do not label this completed work unfinished or merely historical, and do not infer final assembly rankings. No later evaluation job IDs or results were verified. Older historical/other-project outputs are separate and require sample/assembly provenance checks. See [evaluation policy](../configs/evaluation_policy.json).
 
 ## Observations versus inference
 
 - Zero N-run gaps and high contig N50 quantify continuity, not correctness or absence of collapsed repeats.
-- Merqury QV is a read-kmer estimate. In the historical evaluation, all three assemblies used the same four-run HiFi k=21 database, solid threshold 9. Assembly-only k-mers are not automatically errors; cross-animal sequence, read errors and representation affect estimates.
+- Merqury QV is a read-kmer estimate. In the latest completed November 9 BN evaluation, all three assemblies used the same four-run HiFi k=21 database, solid threshold 9. Assembly-only k-mers are not automatically errors; cross-animal sequence, read errors and representation affect estimates.
 - Reference coverage is a union of minimap2 primary target spans at MAPQ ≥20, including indels—not exact matched bases. Chromosome tables exclude nonchromosomal/mitochondrial sequences, although those sequences were present in alignment.
 - Query aligned-base sums may overlap; distinct-contig target overlaps are candidates, not confirmed duplications. Secondary alignment reporting is limited by `-N 50`.
 - Unaligned ≥100-kb regions may reflect repeats, low confidence, gaps, divergence, structural variation or missing sequence. Establish reliable read support and repeat/gap context before labeling missing DNA.

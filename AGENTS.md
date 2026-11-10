@@ -4,7 +4,7 @@
 
 Maintain the existing repository `https://github.com/FarnazSalehi94/Reference-Refinement`; do not create a replacement or discard its history. The curated checkout is separate from `/moosefs/salehi/ref-refine/assemblies/`, which contains large scientific inputs/outputs. Never modify those scientific originals as part of synchronization.
 
-PR #1 merged the initial reorganization on 2026-11-10; main merge commit verified as `e352bcc5a6c40dd0621df9e7224cdcef69931ffa`. Start subsequent work from current origin/main, preserve history and use new review branches. The owner authorized the current historical/preliminary quality-result documentation corrections, safety checks, commit, normal push and new pull request; **merging the new PR is not authorized**. Verify actual remote state rather than assuming publication/PR creation succeeded. After every future meaningful completed research task, update eligible documentation/scripts/verified results/figures, then propose a commit and push and obtain explicit approval. Approval to commit is not approval to push.
+PR #1 merged the initial reorganization on 2026-11-10; main merge commit verified as `e352bcc5a6c40dd0621df9e7224cdcef69931ffa`. Start subsequent work from current origin/main, preserve history and use new review branches. The owner authorized correcting the latest-completed BN evaluation status, safety checks, commit, normal push to the existing documentation branch and a new pull request; **merging the new PR is not authorized**. Verify actual remote state rather than assuming publication/PR creation succeeded. After every future meaningful completed research task, update eligible documentation/scripts/verified results/figures, then propose a commit and push and obtain explicit approval. Approval to commit is not approval to push.
 
 ## After each meaningful research milestone
 
@@ -47,7 +47,7 @@ PR #1 merged the initial reorganization on 2026-11-10; main merge commit verifie
 
 ## Scientific reporting rules
 
-Previous Merqury, QV, read-kmer counts/completeness/error estimates and spectra are **historical/preliminary**, preserved for provenance rather than current quality conclusions. A replacement evaluation is planned, not confirmed running; do not invent new job IDs or results. This does not prove the previous calculations incorrect. Respect `configs/evaluation_policy.json`; synchronization must not promote historical outputs just because their jobs completed. Promote replacements only after explicit scientific review.
+Jobs 2871273 (HiFi k=21), 2871274 (GRCr8 verification) and 2871275 (Merqury) are the **latest completed Brown Norway evaluations**, completed 2026-11-09 with exit 0:0 and expected outputs verified. Preserve QV, k-mer counts/completeness/error estimates and spectra with **preliminary scientific interpretation and further validation planned**. Do not label completed work unfinished or merely historical. Older legacy analyses are separate; DLD1 work is not BN evidence. No later evaluation job IDs/results were verified. Respect `configs/evaluation_policy.json`; future validation needs explicit methods/resources and scientific review, not automatic promotion or invented jobs.
 
 Use verified results only. Hifiasm is **experimental hybrid_v1 0.25.1-r942**, not ordinary hifiasm. The exact build/source commit remains unresolved. Do not claim same-individual sequencing provenance. N50, k-mer completeness and reference span coverage measure different things and do not establish structural correctness.
 

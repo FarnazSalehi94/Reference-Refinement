@@ -59,12 +59,12 @@ def approved_remote(url):
 
 def prepare(source):
     config = json.loads((ROOT/'configs/import_allowlist.json').read_text())
-    policy = json.loads((ROOT/'configs/evaluation_policy.json').read_text())['previous_kmer_evaluation']
-    if policy['classification'] != 'historical/preliminary' or policy['replacement_status'] != 'planned' or policy['replacement_job_ids']:
+    policy = json.loads((ROOT/'configs/evaluation_policy.json').read_text())['latest_bn_kmer_evaluation']
+    if policy['classification'] != 'latest_completed_bn_evaluation_preliminary_interpretation' or policy['further_validation_status'] != 'planned' or policy['further_validation_job_ids']:
         raise ValueError('Evaluation policy changed: explicitly review generator and new evidence before promotion')
     jobs = dict(config['jobs'])
     for job in policy['jobs']:
-        jobs[job] += ' — historical/preliminary outputs'
+        jobs[job] += ' — latest completed BN evaluation; interpretation preliminary'
     # Future corrected Hi-C imports require a successful regeneration job and matrix QC.
     corrected = []
     for manifest in sorted((source/config['corrected_hic_root']).glob('*/submitted_regeneration.tsv')):
@@ -128,10 +128,11 @@ def prepare(source):
     pending['metadata/slurm_status.json'] = (json.dumps(states, indent=2, sort_keys=True) + '\n').encode()
     status = ['# Project status', '', 'Observed ' + date.today().isoformat() + ' (HPC sacct; source-file checks also required for result imports).', '',
               '## Quality-evaluation classification', '',
-              '| Evaluation | Scientific status | Execution / replacement evidence |', '|---|---|---|',
-              '| Previous Merqury, QV and read-kmer estimates/spectra | **Historical/preliminary; not current endorsed estimates** | Earlier jobs 2871273/2871275 completed; outputs preserved |',
-              '| Replacement Merqury, QV and k-mer evaluation | **Planned; not confirmed running** | No replacement job IDs or new results available; no analyses submitted by this documentation update |', '',
-              'A completed job below records execution, not acceptance of its estimates. Reclassification does not prove prior calculations incorrect. See [evaluation policy](configs/evaluation_policy.json).', '',
+              '| Evaluation | Execution status | Scientific interpretation / evidence |', '|---|---|---|',
+              '| Latest Brown Norway HiFi k=21 / Merqury evaluation | **COMPLETED on 2026-11-09** | Jobs 2871273/2871275 and reference verification 2871274 succeeded; numerical outputs preserved; interpretation preliminary |',
+              '| Further quality validation | **Planned; not confirmed running** | No later evaluation job IDs or new results verified; no analyses submitted by this documentation update |',
+              '| Older legacy analyses | Separate historical provenance | Not the November BN evaluation; sample/assembly identity requires verification; DLD1 work is not BN evidence |', '',
+              'Completed execution and preliminary interpretation are separate labels. Planning further validation does not make the completed evaluation unfinished or merely historical. See [evaluation policy](configs/evaluation_policy.json).', '',
               '## Scheduler snapshot', '', '| Job | Analysis | State | Exit code |', '|---|---|---|---|']
     for job, name in jobs.items():
         r = states[job]
@@ -139,7 +140,7 @@ def prepare(source):
         status.append(f'| {job} | {name} | {r["state"]} | {exit_display} |')
     status += ['', '## Interpretation and remaining work', '',
                '- Assembly runs, reference comparisons and gap statistics are completed; small source outputs passed import checks.',
-               '- Previous Merqury/QV/k-mer outputs are historical/preliminary and preserved, not current quality conclusions. Repeat evaluation is planned; it has not been confirmed started.',
+               '- Jobs 2871273/2871274/2871275 are the latest completed BN k-mer/reference/Merqury evaluation. QV/completeness outputs remain available with preliminary scientific interpretation; further validation is planned, not confirmed running.',
                '- Hi-C mapping job completion is not corrected-matrix validation. Legacy Cooler outputs are excluded.',
                '- Pair validation, Pretext and corrected matrix status must be read independently. Pretext completion does not imply visual review.',
                '- Full pairs validation and successful matrix QC are mandatory before corrected Hi-C figures enter the curated index.',
@@ -148,12 +149,12 @@ def prepare(source):
                '- Cross-animal dataset provenance and reference-alignment ambiguity remain interpretation limitations.', '',
                'See [results](results/README.md), [figures](figures/README.md), and [Hi-C workflow](analyses/hic-contact-maps/README.md).', '']
     pending['PROJECT_STATUS.md'] = '\n'.join(status).encode()
-    figure_index = ['# Figure index', '', 'Previous Merqury spectra are **historical/preliminary**, retained for provenance while repeat evaluation is planned. No replacement quality figures are available. Inclusion does not establish structural correctness.', '',
+    figure_index = ['# Figure index', '', 'Merqury spectra belong to the **latest completed Brown Norway evaluation (2026-11-09)**. Their scientific interpretation remains preliminary, with further validation planned. Older historical analyses are separate; no later quality figures are verified. Inclusion does not establish structural correctness.', '',
                     '| Figure | Source-relative path | Execution job | Scientific status |', '|---|---|---|---|']
     for r in figure_rows:
-        classification = 'Historical/preliminary; not a current quality result' if r['job'] in policy['jobs'] else 'Completed screening output; interpretation remains qualified'
+        classification = 'Latest completed BN evaluation; scientific interpretation preliminary' if r['job'] in policy['jobs'] else 'Completed screening output; interpretation remains qualified'
         figure_index.append(f'| [{r["path"]}](../{r["path"]}) | `{r["source"]}` | {r["job"]} | {classification} |')
-    figure_index += ['', 'Reference coverage SVGs show aligned target-span unions, not base identity. Historical Merqury spectra used the same HiFi k=21 database; this is prior methodology, not a new evaluation.',
+    figure_index += ['', 'Reference coverage SVGs show aligned target-span unions, not base identity. The completed November 9 BN Merqury spectra used the same HiFi k=21 database; scientific interpretation remains preliminary.',
                      'Corrected Hi-C panels use per-panel color limits: do not compare colors as absolute contact strengths across panels.', '']
     pending['figures/README.md'] = '\n'.join(figure_index).encode()
     # Build one consistent metrics table from source tables, not hand-entered values.
@@ -174,17 +175,16 @@ def prepare(source):
                          ('contig_N50_bp', 'True contig N50 (bp)'), ('scaffold_N50_bp', 'Scaffold N50 (bp)'),
                          ('N_run_gap_count', 'N-run gaps'), ('total_N_gap_bases', 'Gap bases')]:
         table.append('| ' + label + ' | ' + ' | '.join(f'{int(by_label[s][field]):,}' for s in ('hifiasm','verkko','grcr8')) + ' |')
-    headline_table = list(table)
-    for field, label in [('QV', 'Previous Merqury QV — historical/preliminary'), ('completeness_percent', 'Previous solid-read k-mer completeness (%) — historical/preliminary')]:
+    for field, label in [('QV', 'Merqury QV (preliminary interpretation)'), ('completeness_percent', 'Solid-read k-mer completeness (%) (preliminary interpretation)')]:
         table.append('| ' + label + ' | ' + ' | '.join(mq[s][field] for s in ('hifiasm','verkko','grcr8')) + ' |')
     for s in ('hifiasm','verkko','grcr8'):
         rows.append(dict(assembly=s, **{k:v for k,v in by_label[s].items() if k!='path'}, QV=mq[s]['QV'], completeness_percent=mq[s]['completeness_percent']))
     pending['results/assembly/comparison.tsv'] = tsv(rows, list(rows[0]))
-    pending['results/assembly/COMPARISON.md'] = ('# Assembly comparison and historical quality estimates\n\n'
-        'Contiguity/gap metrics retain their current status. **QV and k-mer completeness below are historical/preliminary**, not endorsed current quality estimates. Replacement evaluation is planned; no new values/job IDs are available. The combined TSV retains all prior numerical values unchanged for provenance.\n\n' + '\n'.join(table) + '\n').encode()
+    pending['results/assembly/COMPARISON.md'] = ('# Assembly comparison and latest completed BN quality evaluation\n\n'
+        '**QV and k-mer completeness are from the latest completed Brown Norway evaluation (2026-11-09; jobs 2871273/2871274/2871275). Scientific interpretation is preliminary, with further validation planned.** No later evaluation is confirmed running and no later results/job IDs are verified. Older historical analyses are separate. The combined TSV retains all numerical values unchanged.\n\n' + '\n'.join(table) + '\n').encode()
     readme = (ROOT/'README.md').read_text()
     readme = re.sub(r'<!-- BEGIN VERIFIED_METRICS -->.*?<!-- END VERIFIED_METRICS -->',
-                    '<!-- BEGIN VERIFIED_METRICS -->\n' + '\n'.join(headline_table) + '\n<!-- END VERIFIED_METRICS -->', readme, flags=re.S)
+                    '<!-- BEGIN VERIFIED_METRICS -->\n' + '\n'.join(table) + '\n<!-- END VERIFIED_METRICS -->', readme, flags=re.S)
     current = ('Validated corrected Hi-C outputs available: ' + '; '.join(corrected_available) + '. Interpretation remains subject to visual/independent review.') if corrected_available else 'Corrected Hi-C outputs are not yet eligible for import; mapping, pairs validation and regeneration have separate status gates.'
     readme = re.sub(r'<!-- BEGIN CURRENT_STATUS -->.*?<!-- END CURRENT_STATUS -->',
                     '<!-- BEGIN CURRENT_STATUS -->\\n> ' + current + '\\n<!-- END CURRENT_STATUS -->', readme, flags=re.S)

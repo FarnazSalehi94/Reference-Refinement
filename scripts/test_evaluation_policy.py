@@ -19,7 +19,7 @@ class EvaluationPolicyTests(unittest.TestCase):
         self.assertFalse(approved_remote('git@github.com:someone-else/Reference-Refinement.git'))
         self.assertFalse(approved_remote('https://example.org/Reference-Refinement.git'))
 
-    def test_completed_jobs_do_not_promote_historical_estimates(self):
+    def test_latest_completed_bn_execution_has_preliminary_interpretation(self):
         manifest = list(csv.DictReader(io.StringIO((ROOT/'metadata/import_manifest.tsv').read_text()), delimiter='\t'))
         config = json.loads((ROOT/'configs/import_allowlist.json').read_text())
         states = json.loads((ROOT/'metadata/slurm_status.json').read_text())
@@ -40,13 +40,19 @@ class EvaluationPolicyTests(unittest.TestCase):
                 self.assertEqual(result, prepare(source))
         readme = result['README.md'].decode()
         headline = readme.split('<!-- BEGIN VERIFIED_METRICS -->')[1].split('<!-- END VERIFIED_METRICS -->')[0]
-        self.assertNotIn('QV', headline)
-        self.assertNotIn('completeness', headline)
-        self.assertIn('historical/preliminary', readme)
-        self.assertIn('planned', result['PROJECT_STATUS.md'].decode().lower())
-        self.assertIn('No replacement job IDs', result['PROJECT_STATUS.md'].decode())
-        self.assertIn('Historical/preliminary', result['figures/README.md'].decode())
-        self.assertIn('historical/preliminary', result['results/assembly/COMPARISON.md'].decode())
+        self.assertIn('QV (preliminary interpretation)', headline)
+        self.assertIn('completeness (%) (preliminary interpretation)', headline)
+        self.assertIn('64.2134', headline)
+        self.assertIn('99.7451', headline)
+        self.assertIn('latest completed BN evaluations', readme)
+        self.assertNotIn('historical/preliminary', readme)
+        status = result['PROJECT_STATUS.md'].decode()
+        self.assertIn('COMPLETED on 2026-11-09', status)
+        self.assertIn('Further quality validation', status)
+        self.assertIn('Planned; not confirmed running', status)
+        self.assertIn('Older legacy analyses', status)
+        self.assertIn('Latest completed BN evaluation; scientific interpretation preliminary', result['figures/README.md'].decode())
+        self.assertIn('latest completed Brown Norway evaluation', result['results/assembly/COMPARISON.md'].decode())
         self.assertEqual(result['results/merqury/merqury_summary.tsv'], (ROOT/'results/merqury/merqury_summary.tsv').read_bytes())
         self.assertEqual(result['results/assembly/comparison.tsv'], (ROOT/'results/assembly/comparison.tsv').read_bytes())
 

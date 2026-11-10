@@ -1,6 +1,6 @@
 # Provenance and metadata
 
-**Evaluation status is separate from computational completion and checksum verification.** Previous Merqury/QV/read-kmer outputs are historical/preliminary; a repeat evaluation is planned, with no replacement results or job IDs. The controlling policy is [configs/evaluation_policy.json](../configs/evaluation_policy.json). Original result tables, figures, methods and import hashes are preserved. A historical job remaining COMPLETED must not silently promote its results to current status.
+**Execution status, scientific interpretation and older historical provenance are separate.** Jobs 2871273/2871274/2871275 are the latest completed BN k-mer/reference/Merqury evaluation, dated 2026-11-09. QV/completeness outputs have preliminary scientific interpretation, with further validation planned; no later job IDs/results were verified. Older historical/other-project analyses must not be conflated with these runs. The controlling policy is [configs/evaluation_policy.json](../configs/evaluation_policy.json). Original numerical tables, figures, methods and import hashes are preserved.
 
 - [datasets.tsv](datasets.tsv): public accessions and same-individual limitations. No private animal identifiers are included.
 - [software_versions.tsv](software_versions.tsv): observed tool versions and evidence; installation metadata is not a complete environment lockfile.

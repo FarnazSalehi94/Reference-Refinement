@@ -2,9 +2,9 @@
 
 ## Policy
 
-**PR #1 merged the initial reorganization on 2026-11-10. The owner approved the current historical/preliminary evaluation-status corrections, commit, normal push and new pull request; merging the new PR is not authorized.** For future research milestones, update eligible documentation/scripts/verified results/figures, propose the reviewed commit and push, and obtain explicit approval before publication. Commands below remain approval-gated steps—not standing authorization to run them. Persistent instructions are in [AGENTS.md](../AGENTS.md) and the parent HPC project instructions.
+**PR #1 merged the initial reorganization on 2026-11-10. The owner approved correcting the latest-completed BN evaluation status, checks, commit, normal push to the existing documentation branch and a pull request; merging the new PR is not authorized.** For future research milestones, update eligible documentation/scripts/verified results/figures, propose the reviewed commit and push, and obtain explicit approval before publication. Commands below remain approval-gated steps—not standing authorization to run them. Persistent instructions are in [AGENTS.md](../AGENTS.md) and the parent HPC project instructions.
 
-Curation is separate from computation. Never point Git at the large assembly tree. No HPC job pushes to GitHub. Import is allowlist-only, does not delete files automatically, and never edits scientific sources. `configs/evaluation_policy.json` keeps previous Merqury/QV/k-mer outputs historical/preliminary even when their SLURM jobs are COMPLETED. Replacement evaluation remains planned; no new job IDs/results may be inferred. Reclassification changes interpretation, not archived numerical data. A policy change requires explicit scientific review and generator/test updates rather than silent promotion.
+Curation is separate from computation. Never point Git at the large assembly tree. No HPC job pushes to GitHub. Import is allowlist-only, does not delete files automatically, and never edits scientific sources. `configs/evaluation_policy.json` records jobs 2871273/2871274/2871275 as the latest completed BN k-mer/reference/Merqury evaluation, dated 2026-11-09, with preliminary scientific interpretation and further validation planned. Older historical analyses remain separate. Do not classify completed work as unfinished/merely historical because validation is planned, or infer later job IDs/results. Numerical outputs remain unchanged. Policy changes require explicit scientific review and matching generator/tests.
 
 Scheduler success alone is insufficient for corrected Hi-C imports: a successful corrected job, validation report, count/sample checks and converged weights are required. New analysis objectives or results must be added deliberately to `configs/import_allowlist.json`.
 
@@ -34,7 +34,7 @@ git add -- AGENTS.md README.md PROJECT_STATUS.md assembly analyses configs metad
 python3 scripts/sync_project.py check
 git diff --cached --check
 git diff --cached --stat
-python3 scripts/sync_project.py commit --message "docs: clarify historical quality estimates and planned replacement evaluations"
+python3 scripts/sync_project.py commit --message "docs: clarify latest completed BN quality evaluation and preliminary interpretation"
 ```
 
 Inspect the full staged diff and manually confirm biological claims/figure labels. Binary figure content needs visual review. Use specific messages, e.g. `methods: document 1-based Cooler correction` or `results: add validated Hi-C maps for revision ...`; avoid `update files`.
