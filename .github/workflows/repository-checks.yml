@@ -14,5 +14,7 @@ jobs:
         run: python3 scripts/repository_guard.py --links
       - name: Test publication safety rules
         run: python3 scripts/test_repository_guard.py
+      - name: Preserve completed BN evaluation status and preliminary interpretation
+        run: python3 scripts/test_evaluation_policy.py
       - name: Syntax-check maintenance tooling
         run: python3 -m py_compile scripts/repository_guard.py scripts/sync_project.py

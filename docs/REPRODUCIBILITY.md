@@ -19,7 +19,7 @@ Current scientific tree: `/moosefs/salehi/ref-refine/assemblies/`. Archived expe
 
 - Gap/contig metrics: source `analysis/gap_stats/gap_stats.py`; split at every N-run, including lower-case n.
 - Reference alignment: minimap2 asm5, `--secondary=yes -N 50 -c`; primary target-span unions, MAPQ ≥20 conservative view. BED coordinates in HPC results are 0-based half-open.
-- K-mers: meryl k=21 count per HiFi run followed by union-sum; common database for all three Merqury evaluations.
+- Latest completed BN k-mer evaluation (2026-11-09): meryl k=21 count per HiFi run followed by union-sum; common database for three Merqury evaluations, with recorded threshold 9. Jobs 2871273/2871274/2871275 completed successfully. Scientific interpretation is preliminary and further validation is planned; no later evaluation is confirmed running. Future work requires approved methods/resources and fresh outputs, while older historical analyses remain a separate provenance category.
 - Hi-C: BWA-MEM `-5SP -T0`, pairtools MAPQ ≥30, 5unique and deduplication. Original pairs remain 1-based; Cooler default conversion is required.
 
 ## Auditability and limitations

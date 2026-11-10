@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "latest_bn_kmer_evaluation": {
+    "classification": "latest_completed_bn_evaluation_preliminary_interpretation",
+    "completed_on": "2026-11-09",
+    "jobs": ["2871273", "2871275"],
+    "reference_verification_job": "2871274",
+    "evidence": "All three jobs completed with exit 0:0; intended assembly input links, QV/completeness files, threshold 9 and Merqury completion markers were verified.",
+    "interpretation": "preliminary; further validation planned",
+    "further_validation_status": "planned",
+    "further_validation_job_ids": [],
+    "newer_evaluation_results": "none verified"
+  },
+  "older_historical_analyses": {
+    "classification": "separate historical provenance; not the November 2026 BN evaluations",
+    "caution": "Older legacy outputs require sample/assembly verification. Historical job 1954396 explicitly references DLD1 and must not be presented as a Brown Norway evaluation."
+  },
+  "promotion_policy": "Keep execution status, scientific interpretation and historical provenance distinct. Do not label completed November BN evaluations as unfinished or merely historical. Future validation requires approved methods/resources and verified outputs; never invent later jobs/results."
+}

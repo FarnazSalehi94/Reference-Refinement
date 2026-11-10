@@ -4,7 +4,7 @@
 
 Maintain the existing repository `https://github.com/FarnazSalehi94/Reference-Refinement`; do not create a replacement or discard its history. The curated checkout is separate from `/moosefs/salehi/ref-refine/assemblies/`, which contains large scientific inputs/outputs. Never modify those scientific originals as part of synchronization.
 
-Initial-review branch: `curate/bn-reference-20261110`, based on recovered main commit `bfce107a802c7ce40a5df68a7bc7027b4c1fe576`. Existing commits must remain ancestors. On 2026-11-10 the owner approved committing the reviewed 84-file reorganization, a normal push of this branch, and opening a pull request into main. **Merging is not authorized.** Verify actual Git/remote state rather than assuming publication succeeded. For future updates, propose the reviewed commit and push after every meaningful completed research task and obtain explicit approval before either action. A prepared/staged diff is not a commit, and approval to commit is not approval to push.
+PR #1 merged the initial reorganization on 2026-11-10; main merge commit verified as `e352bcc5a6c40dd0621df9e7224cdcef69931ffa`. Start subsequent work from current origin/main, preserve history and use new review branches. The owner authorized correcting the latest-completed BN evaluation status, safety checks, commit, normal push to the existing documentation branch and a new pull request; **merging the new PR is not authorized**. Verify actual remote state rather than assuming publication/PR creation succeeded. After every future meaningful completed research task, update eligible documentation/scripts/verified results/figures, then propose a commit and push and obtain explicit approval. Approval to commit is not approval to push.
 
 ## After each meaningful research milestone
 
@@ -46,6 +46,8 @@ Initial-review branch: `curate/bn-reference-20261110`, based on recovered main c
 - Preserve dated historical notes. A source snapshot may have stale status or old paths; current narrative must identify those limitations.
 
 ## Scientific reporting rules
+
+Jobs 2871273 (HiFi k=21), 2871274 (GRCr8 verification) and 2871275 (Merqury) are the **latest completed Brown Norway evaluations**, completed 2026-11-09 with exit 0:0 and expected outputs verified. Preserve QV, k-mer counts/completeness/error estimates and spectra with **preliminary scientific interpretation and further validation planned**. Do not label completed work unfinished or merely historical. Older legacy analyses are separate; DLD1 work is not BN evidence. No later evaluation job IDs/results were verified. Respect `configs/evaluation_policy.json`; future validation needs explicit methods/resources and scientific review, not automatic promotion or invented jobs.
 
 Use verified results only. Hifiasm is **experimental hybrid_v1 0.25.1-r942**, not ordinary hifiasm. The exact build/source commit remains unresolved. Do not claim same-individual sequencing provenance. N50, k-mer completeness and reference span coverage measure different things and do not establish structural correctness.
 

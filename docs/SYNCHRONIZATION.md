@@ -2,9 +2,11 @@
 
 ## Policy
 
-**On 2026-11-10 the owner approved the initial reviewed commit, normal branch push and pull-request creation; merging is not authorized.** For future research milestones, propose the reviewed commit and push and obtain explicit approval before publication. Commands below remain approval-gated steps—not standing authorization to run them. Persistent instructions are in [AGENTS.md](../AGENTS.md) and the parent HPC project instructions.
+**PR #1 merged the initial reorganization on 2026-11-10. The owner approved correcting the latest-completed BN evaluation status, checks, commit, normal push to the existing documentation branch and a pull request; merging the new PR is not authorized.** For future research milestones, update eligible documentation/scripts/verified results/figures, propose the reviewed commit and push, and obtain explicit approval before publication. Commands below remain approval-gated steps—not standing authorization to run them. Persistent instructions are in [AGENTS.md](../AGENTS.md) and the parent HPC project instructions.
 
-Curation is separate from computation. Never point Git at the large assembly tree. No HPC job pushes to GitHub. Import is allowlist-only, does not delete files automatically, and never edits scientific sources. Scheduler success alone is insufficient for corrected Hi-C imports: a successful corrected job, validation report, count/sample checks and converged weights are required. New analysis objectives or results must be added deliberately to `configs/import_allowlist.json`.
+Curation is separate from computation. Never point Git at the large assembly tree. No HPC job pushes to GitHub. Import is allowlist-only, does not delete files automatically, and never edits scientific sources. `configs/evaluation_policy.json` records jobs 2871273/2871274/2871275 as the latest completed BN k-mer/reference/Merqury evaluation, dated 2026-11-09, with preliminary scientific interpretation and further validation planned. Older historical analyses remain separate. Do not classify completed work as unfinished/merely historical because validation is planned, or infer later job IDs/results. Numerical outputs remain unchanged. Policy changes require explicit scientific review and matching generator/tests.
+
+Scheduler success alone is insufficient for corrected Hi-C imports: a successful corrected job, validation report, count/sample checks and converged weights are required. New analysis objectives or results must be added deliberately to `configs/import_allowlist.json`.
 
 Exact source snapshots may contain HPC usernames/paths and public accessions; review for privacy before publication. The heuristic scanner cannot prove absence of sensitive information or biological misinterpretation.
 
@@ -32,7 +34,7 @@ git add -- AGENTS.md README.md PROJECT_STATUS.md assembly analyses configs metad
 python3 scripts/sync_project.py check
 git diff --cached --check
 git diff --cached --stat
-python3 scripts/sync_project.py commit --message "results: update verified Merqury and chromosome comparison summaries"
+python3 scripts/sync_project.py commit --message "docs: clarify latest completed BN quality evaluation and preliminary interpretation"
 ```
 
 Inspect the full staged diff and manually confirm biological claims/figure labels. Binary figure content needs visual review. Use specific messages, e.g. `methods: document 1-based Cooler correction` or `results: add validated Hi-C maps for revision ...`; avoid `update files`.
@@ -47,13 +49,13 @@ The guard scans actual staged blobs, rejects files over 5 MiB, data/binary forma
 
 ## Approved publication only
 
-Initial branch: `curate/bn-reference-20261110`, based on recovered origin/main. The owner approved committing/pushing this reviewed reorganization and creating a pull request on 2026-11-10; verify actual remote state and do not merge it. Thereafter push only explicitly approved, reviewed commits:
+The initial `curate/bn-reference-20261110` branch was merged through PR #1. The current correction branch is `research/documentation-preliminary-kmer-20261110`, based on the merged main. Push only explicitly approved, reviewed commits; verify actual remote state and do not merge the new PR:
 
 ```bash
 python3 scripts/sync_project.py push --approve-push
 ```
 
-The tool permits only `curate/*` or `research/*` review branches, verifies the existing remote, requires a clean working tree, fetches origin, refuses if origin/main is no longer an ancestor, scans every outgoing commit tree, and uses a normal non-forced push with an explicit branch ref. A non-fast-forward is a stop for review, not a reason to force-push. Open a GitHub pull request into main and review its diff before merging. There is no direct-main push path in this tool.
+The tool permits only `curate/*` or `research/*` review branches, accepts only the exact approved repository URL via HTTPS or SSH, verifies the existing remote, requires a clean working tree, fetches origin, refuses if origin/main is no longer an ancestor, scans every outgoing commit tree, and uses a normal non-forced push with an explicit branch ref. A non-fast-forward is a stop for review, not a reason to force-push. Open a GitHub pull request into main and review its diff before merging. There is no direct-main push path in this tool.
 
 After merging an approved PR, start the next update from current main rather than stacking unrelated work on an old branch:
 
@@ -62,7 +64,7 @@ git fetch origin
 git switch -c research/descriptive-update-name origin/main
 ```
 
-Push authentication has not been tested; successful public fetch is not proof of write access. Use GitHub's credential helper or authenticated SSH after configuration if needed; never put tokens in remote URLs, files, shell history or commits.
+SSH authentication and branch push were verified for this repository. SSH keys authenticate Git operations, not pull-request REST API calls. GitHub CLI/API authentication must be configured separately to create PRs programmatically; never assume that a successful branch push created a PR. Use GitHub's credential helper or authenticated SSH after configuration if needed; never put tokens in remote URLs, files, shell history or commits.
 
 ## HTTPS trust repair
 

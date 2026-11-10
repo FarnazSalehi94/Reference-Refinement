@@ -1,5 +1,6 @@
 # Configurations
 
+- `evaluation_policy.json`: latest completed BN Merqury/QV/k-mer evaluation (2026-11-09), preliminary scientific interpretation and planned further validation. Synchronization separates older historical analyses and must not invent later job IDs/results.
 - `import_allowlist.json`: approved source directories/files, destination paths, successful job gates and selected figures for curation. New scientific objectives/results need deliberate review before additions.
 - `verkko/run_2871179.yml`: exact generated Verkko configuration from the successful run. Original tool/read paths and parameters are retained as provenance; do not assume it is portable or resubmit it unchanged.
 

@@ -52,9 +52,19 @@ def source_file(root, rel):
     return path
 
 
+def approved_remote(url):
+    return url in ('https://github.com/FarnazSalehi94/Reference-Refinement.git',
+                   'git@github.com:FarnazSalehi94/Reference-Refinement.git')
+
+
 def prepare(source):
     config = json.loads((ROOT/'configs/import_allowlist.json').read_text())
+    policy = json.loads((ROOT/'configs/evaluation_policy.json').read_text())['latest_bn_kmer_evaluation']
+    if policy['classification'] != 'latest_completed_bn_evaluation_preliminary_interpretation' or policy['further_validation_status'] != 'planned' or policy['further_validation_job_ids']:
+        raise ValueError('Evaluation policy changed: explicitly review generator and new evidence before promotion')
     jobs = dict(config['jobs'])
+    for job in policy['jobs']:
+        jobs[job] += ' — latest completed BN evaluation; interpretation preliminary'
     # Future corrected Hi-C imports require a successful regeneration job and matrix QC.
     corrected = []
     for manifest in sorted((source/config['corrected_hic_root']).glob('*/submitted_regeneration.tsv')):
@@ -117,13 +127,20 @@ def prepare(source):
     pending['metadata/import_manifest.tsv'] = tsv(entries, ['source_relative', 'repository_path', 'sha256', 'bytes', 'evidence_job', 'category'])
     pending['metadata/slurm_status.json'] = (json.dumps(states, indent=2, sort_keys=True) + '\n').encode()
     status = ['# Project status', '', 'Observed ' + date.today().isoformat() + ' (HPC sacct; source-file checks also required for result imports).', '',
-              '| Job | Analysis | State | Exit code |', '|---|---|---|---|']
+              '## Quality-evaluation classification', '',
+              '| Evaluation | Execution status | Scientific interpretation / evidence |', '|---|---|---|',
+              '| Latest Brown Norway HiFi k=21 / Merqury evaluation | **COMPLETED on 2026-11-09** | Jobs 2871273/2871275 and reference verification 2871274 succeeded; numerical outputs preserved; interpretation preliminary |',
+              '| Further quality validation | **Planned; not confirmed running** | No later evaluation job IDs or new results verified; no analyses submitted by this documentation update |',
+              '| Older legacy analyses | Separate historical provenance | Not the November BN evaluation; sample/assembly identity requires verification; DLD1 work is not BN evidence |', '',
+              'Completed execution and preliminary interpretation are separate labels. Planning further validation does not make the completed evaluation unfinished or merely historical. See [evaluation policy](configs/evaluation_policy.json).', '',
+              '## Scheduler snapshot', '', '| Job | Analysis | State | Exit code |', '|---|---|---|---|']
     for job, name in jobs.items():
         r = states[job]
         exit_display = '— (not final)' if r['state'] in ('RUNNING', 'PENDING', 'CONFIGURING', 'COMPLETING', 'SUSPENDED') else r['exit_code']
         status.append(f'| {job} | {name} | {r["state"]} | {exit_display} |')
     status += ['', '## Interpretation and remaining work', '',
-               '- Assembly runs, reference comparisons, gap statistics and Merqury are completed; linked small outputs passed import gates.',
+               '- Assembly runs, reference comparisons and gap statistics are completed; small source outputs passed import checks.',
+               '- Jobs 2871273/2871274/2871275 are the latest completed BN k-mer/reference/Merqury evaluation. QV/completeness outputs remain available with preliminary scientific interpretation; further validation is planned, not confirmed running.',
                '- Hi-C mapping job completion is not corrected-matrix validation. Legacy Cooler outputs are excluded.',
                '- Pair validation, Pretext and corrected matrix status must be read independently. Pretext completion does not imply visual review.',
                '- Full pairs validation and successful matrix QC are mandatory before corrected Hi-C figures enter the curated index.',
@@ -132,11 +149,12 @@ def prepare(source):
                '- Cross-animal dataset provenance and reference-alignment ambiguity remain interpretation limitations.', '',
                'See [results](results/README.md), [figures](figures/README.md), and [Hi-C workflow](analyses/hic-contact-maps/README.md).', '']
     pending['PROJECT_STATUS.md'] = '\n'.join(status).encode()
-    figure_index = ['# Figure index', '', 'Selected completed figures. Inclusion is not an interpretation of structural correctness.', '',
-                    '| Figure | Source-relative path | Successful job |', '|---|---|---|']
+    figure_index = ['# Figure index', '', 'Merqury spectra belong to the **latest completed Brown Norway evaluation (2026-11-09)**. Their scientific interpretation remains preliminary, with further validation planned. Older historical analyses are separate; no later quality figures are verified. Inclusion does not establish structural correctness.', '',
+                    '| Figure | Source-relative path | Execution job | Scientific status |', '|---|---|---|---|']
     for r in figure_rows:
-        figure_index.append(f'| [{r["path"]}](../{r["path"]}) | `{r["source"]}` | {r["job"]} |')
-    figure_index += ['', 'Reference coverage SVGs show aligned target-span unions, not base identity. Merqury spectra use the same HiFi k=21 database.',
+        classification = 'Latest completed BN evaluation; scientific interpretation preliminary' if r['job'] in policy['jobs'] else 'Completed screening output; interpretation remains qualified'
+        figure_index.append(f'| [{r["path"]}](../{r["path"]}) | `{r["source"]}` | {r["job"]} | {classification} |')
+    figure_index += ['', 'Reference coverage SVGs show aligned target-span unions, not base identity. The completed November 9 BN Merqury spectra used the same HiFi k=21 database; scientific interpretation remains preliminary.',
                      'Corrected Hi-C panels use per-panel color limits: do not compare colors as absolute contact strengths across panels.', '']
     pending['figures/README.md'] = '\n'.join(figure_index).encode()
     # Build one consistent metrics table from source tables, not hand-entered values.
@@ -157,12 +175,13 @@ def prepare(source):
                          ('contig_N50_bp', 'True contig N50 (bp)'), ('scaffold_N50_bp', 'Scaffold N50 (bp)'),
                          ('N_run_gap_count', 'N-run gaps'), ('total_N_gap_bases', 'Gap bases')]:
         table.append('| ' + label + ' | ' + ' | '.join(f'{int(by_label[s][field]):,}' for s in ('hifiasm','verkko','grcr8')) + ' |')
-    for field, label in [('QV', 'Merqury QV'), ('completeness_percent', 'Solid-read k-mer completeness (%)')]:
+    for field, label in [('QV', 'Merqury QV (preliminary interpretation)'), ('completeness_percent', 'Solid-read k-mer completeness (%) (preliminary interpretation)')]:
         table.append('| ' + label + ' | ' + ' | '.join(mq[s][field] for s in ('hifiasm','verkko','grcr8')) + ' |')
     for s in ('hifiasm','verkko','grcr8'):
         rows.append(dict(assembly=s, **{k:v for k,v in by_label[s].items() if k!='path'}, QV=mq[s]['QV'], completeness_percent=mq[s]['completeness_percent']))
     pending['results/assembly/comparison.tsv'] = tsv(rows, list(rows[0]))
-    pending['results/assembly/COMPARISON.md'] = ('# Verified assembly comparison\n\n' + '\n'.join(table) + '\n').encode()
+    pending['results/assembly/COMPARISON.md'] = ('# Assembly comparison and latest completed BN quality evaluation\n\n'
+        '**QV and k-mer completeness are from the latest completed Brown Norway evaluation (2026-11-09; jobs 2871273/2871274/2871275). Scientific interpretation is preliminary, with further validation planned.** No later evaluation is confirmed running and no later results/job IDs are verified. Older historical analyses are separate. The combined TSV retains all numerical values unchanged.\n\n' + '\n'.join(table) + '\n').encode()
     readme = (ROOT/'README.md').read_text()
     readme = re.sub(r'<!-- BEGIN VERIFIED_METRICS -->.*?<!-- END VERIFIED_METRICS -->',
                     '<!-- BEGIN VERIFIED_METRICS -->\n' + '\n'.join(table) + '\n<!-- END VERIFIED_METRICS -->', readme, flags=re.S)
@@ -233,7 +252,7 @@ def main():
             raise ValueError('Push only review branches curate/* or research/*; no direct main push')
         if git('status', '--porcelain'):
             raise ValueError('Commit/review working-tree changes before push')
-        if git('remote', 'get-url', 'origin') != 'https://github.com/FarnazSalehi94/Reference-Refinement.git':
+        if not approved_remote(git('remote', 'get-url', 'origin')):
             raise ValueError('Unexpected remote URL')
         ssl_setting = subprocess.run(['git', '-C', str(ROOT), 'config', '--get', 'http.sslVerify'], stdout=subprocess.PIPE, text=True)
         if ssl_setting.stdout.strip().lower() == 'false':
