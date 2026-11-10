@@ -1,0 +1,5 @@
+# Preserve exact source-result bytes and checksums, including Python CSV CRLF endings.
+*.tsv -text whitespace=cr-at-eol
+# Scientific figures are reviewed as binaries; no line-ending conversion.
+*.png -text
+*.svg -text

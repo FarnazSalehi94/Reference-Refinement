@@ -1,0 +1,4 @@
+assembly	assembly_only_kmers	total_assembly_kmers	QV	error_rate	solid_read_kmers_in_assembly	solid_read_kmers_total	completeness_percent
+hifiasm	23174	2911549154	64.2134	3.79017e-07	2081559087	2087163502	99.7315
+verkko	78349	2898653938	58.9038	1.28713e-06	2081843436	2087163502	99.7451
+grcr8	8326	2845444695	68.5593	1.39337e-07	2081236000	2087163502	99.716

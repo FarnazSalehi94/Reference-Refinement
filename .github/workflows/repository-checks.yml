@@ -1,0 +1,18 @@
+name: Curated repository checks
+on:
+  pull_request:
+  push:
+    branches: [main, 'curate/**', 'research/**']
+permissions:
+  contents: read
+jobs:
+  publication-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject raw data, large files and common credential patterns; verify current local links
+        run: python3 scripts/repository_guard.py --links
+      - name: Test publication safety rules
+        run: python3 scripts/test_repository_guard.py
+      - name: Syntax-check maintenance tooling
+        run: python3 -m py_compile scripts/repository_guard.py scripts/sync_project.py

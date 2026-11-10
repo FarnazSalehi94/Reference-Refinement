@@ -1,0 +1,4 @@
+assembly	contigs	total_bases	query_bases_covered_by_primary_alignment	query_bases_covered_by_MAPQ20_primary	query_bases_without_MAPQ20_primary
+primary	125	2911551654	2888947449	2885126391	26425263
+hap1	130	2666936900	2650996390	2648315051	18621849
+hap2	66	2910952370	2892286303	2890176771	20775599

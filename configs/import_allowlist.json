@@ -1,0 +1,63 @@
+{
+  "max_file_bytes": 5242880,
+  "script_groups": {
+    "analysis/scripts": "analyses/grcr8-comparison/hifiasm/scripts",
+    "analysis/verkko_comparison/scripts": "analyses/grcr8-comparison/verkko/scripts",
+    "analysis/merqury/scripts": "analyses/merqury/scripts",
+    "analysis/hic_contact_maps/scripts": "analyses/hic-contact-maps/scripts",
+    "analysis/hic_contact_maps/pretext/scripts": "analyses/hic-contact-maps/pretext/scripts"
+  },
+  "files": {
+    "scripts/hifiasm.slurm": "assembly/hifiasm/hifiasm.slurm",
+    "scripts/verkko.slurm": "assembly/verkko/verkko.slurm",
+    "verkko/run_2871179/assembly/verkko.yml": "configs/verkko/run_2871179.yml",
+    "scripts/assembly_stats.py": "analyses/assembly-statistics/assembly_stats.py",
+    "analysis/gap_stats/gap_stats.py": "analyses/assembly-statistics/gap_stats.py",
+    "analysis/gap_stats/run_gap_stats.slurm": "analyses/assembly-statistics/run_gap_stats.slurm",
+    "analysis/chromosome_investigation/summarize_contigs.py": "analyses/chromosome-investigation/summarize_contigs.py",
+    "assembly_metadata.md": "metadata/source_records/assembly_metadata.md",
+    "assembly_readiness.md": "metadata/source_records/assembly_readiness.md",
+    "input_validation/input_integrity_report.md": "metadata/source_records/input_integrity_report.md",
+    "analysis/results/interpretation.md": "analyses/grcr8-comparison/interpretation.source.md",
+    "analysis/chromosome_investigation/findings.md": "analyses/chromosome-investigation/findings.source.md",
+    "analysis/merqury/README.md": "analyses/merqury/README.source.md",
+    "analysis/hic_contact_maps/README.md": "analyses/hic-contact-maps/README.source.md",
+    "analysis/hic_contact_maps/pretext/README.md": "analyses/hic-contact-maps/pretext/README.source.md",
+    "analysis/hic_contact_maps/corrections/20261109_pairs1based_v1/README.md": "analyses/hic-contact-maps/corrections/20261109_pairs1based_v1/README.md",
+    "analysis/hic_contact_maps/corrections/20261109_pairs1based_v1/EXECUTION.md": "analyses/hic-contact-maps/corrections/20261109_pairs1based_v1/EXECUTION.md"
+  },
+  "verified_results": [
+    {"source": "analysis/gap_stats/results/gap_stats.tsv", "destination": "results/assembly/gap_stats.tsv", "job": "2871277"},
+    {"source": "analysis/merqury/results/merqury_summary.tsv", "destination": "results/merqury/merqury_summary.tsv", "job": "2871275"},
+    {"source": "analysis/results/chromosome_comparison.tsv", "destination": "results/grcr8-comparison/hifiasm/chromosome_comparison.tsv", "job": "2871197"},
+    {"source": "analysis/results/assembly_query_alignment_summary.tsv", "destination": "results/grcr8-comparison/hifiasm/assembly_query_alignment_summary.tsv", "job": "2871197"},
+    {"source": "analysis/verkko_comparison/results/chromosome_comparison.tsv", "destination": "results/grcr8-comparison/verkko/chromosome_comparison.tsv", "job": "2871272"},
+    {"source": "analysis/verkko_comparison/results/assembly_query_alignment_summary.tsv", "destination": "results/grcr8-comparison/verkko/assembly_query_alignment_summary.tsv", "job": "2871272"},
+    {"source": "analysis/chromosome_investigation/contig_chromosome_alignments.tsv", "destination": "results/chromosomes/contig_chromosome_alignments.tsv", "job": "2871272"}
+  ],
+  "verified_figures": [
+    {"source": "analysis/results/chromosome_reference_coverage.svg", "destination": "figures/grcr8-comparison/hifiasm_coverage.svg", "job": "2871197"},
+    {"source": "analysis/verkko_comparison/results/chromosome_reference_coverage.svg", "destination": "figures/grcr8-comparison/four_assembly_coverage.svg", "job": "2871272"},
+    {"source": "analysis/merqury/results/hifiasm/hifiasm.hifiasm.spectra-cn.ln.png", "destination": "figures/merqury/hifiasm.spectra-cn.png", "job": "2871275", "log": "analysis/merqury/results/hifiasm/logs/hifiasm.spectra-cn.log"},
+    {"source": "analysis/merqury/results/verkko/verkko.verkko.spectra-cn.ln.png", "destination": "figures/merqury/verkko.spectra-cn.png", "job": "2871275", "log": "analysis/merqury/results/verkko/logs/verkko.spectra-cn.log"},
+    {"source": "analysis/merqury/results/grcr8/grcr8.grcr8.spectra-cn.ln.png", "destination": "figures/merqury/grcr8.spectra-cn.png", "job": "2871275", "log": "analysis/merqury/results/grcr8/logs/grcr8.spectra-cn.log"}
+  ],
+  "jobs": {
+    "2871178": "Hifiasm hybrid_v1 assembly",
+    "2871179": "Verkko assembly",
+    "2871197": "Hifiasm versus GRCr8",
+    "2871272": "Verkko versus GRCr8",
+    "2871273": "Combined HiFi k=21 database",
+    "2871274": "Official GRCr8 verification",
+    "2871275": "Merqury (three assemblies)",
+    "2871277": "Consistent gap/contiguity statistics",
+    "2871279": "Hifiasm Hi-C mapping (legacy Cooler stage)",
+    "2871280": "Verkko Hi-C mapping (legacy Cooler stage)",
+    "2871281": "Obsolete Hi-C plot job",
+    "2871282": "Pretext maps/snapshots",
+    "2871285": "Hifiasm pairs EOF validation",
+    "2871286": "Verkko pairs EOF validation",
+    "2871287": "Deferred corrected Cooler submission"
+  },
+  "corrected_hic_root": "analysis/hic_contact_maps/corrections"
+}

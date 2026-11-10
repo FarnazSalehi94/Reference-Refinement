@@ -1,0 +1,4 @@
+path	fasta_records_scaffolds	total_sequence_bp	scaffold_N50_bp	contigs_split_at_N_runs	contig_N50_bp	N_run_gap_count	total_N_gap_bases
+/moosefs/salehi/ref-refine/assemblies/hifiasm/run_2871178/primary.fasta	125	2911551654	144104652	125	144104652	0	0
+/moosefs/salehi/ref-refine/assemblies/verkko/run_2871179/assembly/assembly.fasta	272	2899709555	146314543	293	126563169	21	1049757
+/moosefs/salehi/ref-refine/assemblies/analysis/merqury/reference/GRCr8.fasta	76	2849581192	137014596	296	64250101	220	4130577
